@@ -8,11 +8,11 @@ public class BubbleCreater : MonoBehaviour
     [SerializeField, Tooltip("膨らむ場所")] private Transform nozzleTrans;
     [SerializeField] InputProvider inputProvider;
     [Header("サイズ")]
-    [SerializeField,Tooltip("最大サイズ")] private float maxSize;
-    [SerializeField,Tooltip("最小サイズ")] private float minSize;
+    [SerializeField, Tooltip("最小サイズ")] public float minSize;
+    [SerializeField,Tooltip("最大サイズ")] public float maxSize;
     [Header("重量")]
-    [SerializeField, Tooltip("最大重量")] private float maxMass;
     [SerializeField, Tooltip("最小重量")] private float minMass;
+    [SerializeField, Tooltip("最大重量")] private float maxMass;
     [Header("膨らむ")]
     [SerializeField,Tooltip("1秒間に膨らむサイズ")] private float expandSpeed;
     [SerializeField, Tooltip("1秒間に右に移動する距離")] private float expandRightMoveSpeed;
@@ -20,23 +20,28 @@ public class BubbleCreater : MonoBehaviour
     public bool finishesBubbleCreate;
     [SerializeField,Tooltip("放出する力")] private float releasePower;
 
+    private SEPlayer sePlayer;
+
     private Transform bubbleTrans;
     private BubbleMover bubbleMover;
 
     private bool isBubbleCreate;
     private bool onceBubbleStart;
 
-    private float nowSize;
+    public float nowSize;
 
     private void Awake()
     {
-
+        sePlayer = GetComponent<SEPlayer>();
     }
+
     // Start is called before the first frame update
     void Start()
     {
         bubbleTrans = bubbleObj.GetComponent<Transform>();
         bubbleMover = bubbleObj.GetComponent<BubbleMover>();
+
+        nowSize = minSize;
     }
 
     // Update is called once per frame
@@ -50,6 +55,7 @@ public class BubbleCreater : MonoBehaviour
                 if (inputProvider.isLeftMouseButtonDown)
                 {
                     CreateBubble();
+                    sePlayer.PlaySE("Expand");
                     isBubbleCreate = true;
                 }
             }
@@ -78,6 +84,7 @@ public class BubbleCreater : MonoBehaviour
             {
                 float bubbleMass = CalcSizeToMass();
                 bubbleMover.StartMove(releasePower,bubbleMass);
+                sePlayer.PlaySE("Release");
                 onceBubbleStart = true;
             }
         }
@@ -86,7 +93,6 @@ public class BubbleCreater : MonoBehaviour
     private void CreateBubble()
     {
         bubbleTrans.position = nozzleTrans.position;
-        nowSize = minSize;
         bubbleTrans.localScale = new Vector3(nowSize, nowSize, 1);
 
         bubbleObj.SetActive(true);

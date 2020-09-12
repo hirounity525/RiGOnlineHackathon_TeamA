@@ -14,13 +14,19 @@ public class Course1MainSystem : MonoBehaviour
 {
     [SerializeField] private GameState gameState;
 
+    [Header("Start")]
+    [SerializeField] private TimelineController startTimeline;
+
     [Header("Create")]
     [SerializeField] private BubbleCreater bubbleCreater;
 
     [Header("Main")]
     [SerializeField] private BubbleManager bubbleManager;
+    [SerializeField] private GameObject uchiwaObj;
 
     InputProvider inputProvider;
+
+    private bool startsPlay;
 
     private void Awake()
     {
@@ -39,8 +45,21 @@ public class Course1MainSystem : MonoBehaviour
         switch (gameState)
         {
             case GameState.START:
+
+                if (!startsPlay)
+                {
+                    startTimeline.PlayTimeline();
+                    startsPlay = true;
+                }
+
+                if (startTimeline.isFinish)
+                {
+                    gameState = GameState.CREATE;
+                }
+
                 break;
             case GameState.CREATE:
+
                 inputProvider.MainInput();
 
                 if (bubbleCreater.finishesBubbleCreate)
@@ -50,7 +69,10 @@ public class Course1MainSystem : MonoBehaviour
 
                 break;
             case GameState.MAIN:
+
                 inputProvider.MainInput();
+
+                if (!uchiwaObj.activeSelf) uchiwaObj.SetActive(true);
 
                 if (bubbleManager.bubbleCore.isHit)
                 {

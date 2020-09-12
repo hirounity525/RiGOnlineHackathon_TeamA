@@ -31,6 +31,8 @@ public class InputProvider : MonoBehaviour
         }
         else
         {
+            isLeftMouseButtonDown = false;
+
             if (clickTimer >= nextCanClickTime)
             {
                 canClick = true;
