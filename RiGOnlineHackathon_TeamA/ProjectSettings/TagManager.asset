@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bubble
   - Trap
+  - Goal
   layers:
   - Default
   - TransparentFX

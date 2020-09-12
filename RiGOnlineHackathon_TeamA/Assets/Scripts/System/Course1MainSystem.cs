@@ -24,13 +24,27 @@ public class Course1MainSystem : MonoBehaviour
     [SerializeField] private BubbleManager bubbleManager;
     [SerializeField] private GameObject uchiwaObj;
 
-    InputProvider inputProvider;
+    [Header("Finish")]
+    [SerializeField] private ScoreUIDrawer scoreUI;
+    [SerializeField] private TimelineController scoreTimeline;
+    [SerializeField] private float scoreSkipTime;
+
+    private InputProvider inputProvider;
+    private SEPlayer sePlayer;
+    private SceneLoader sceneLoader;
+    private ScoreManager scoreManager;
 
     private bool startsPlay;
+
+    private bool startsScore;
+    private bool isSkipScore;
 
     private void Awake()
     {
         inputProvider = GetComponent<InputProvider>();
+        sePlayer = GetComponent<SEPlayer>();
+        sceneLoader = GetComponent<SceneLoader>();
+        scoreManager = GetComponent<ScoreManager>();
     }
 
     // Start is called before the first frame update
@@ -76,12 +90,56 @@ public class Course1MainSystem : MonoBehaviour
 
                 if (bubbleManager.bubbleCore.isHit)
                 {
+                    scoreManager.isGameClear = false;
+                    bubbleManager.StopBubble();
+                    ScoreSave();
+                    gameState = GameState.FINISH;
+                }
+
+                if (bubbleManager.bubbleCore.isGoal)
+                {
+                    scoreManager.isGameClear = true;
+                    sePlayer.PlaySE("Goal");
+                    ScoreSave();
                     gameState = GameState.FINISH;
                 }
 
                 break;
             case GameState.FINISH:
+
+                if (!startsScore)
+                {
+                    scoreTimeline.PlayTimeline();
+                    startsScore = true;
+                }
+
+                if(!isSkipScore && inputProvider.GetSkipButtonDown() && scoreTimeline.timelineTime() < scoreSkipTime)
+                {
+                    scoreTimeline.SkipTimeline(scoreSkipTime);
+                    isSkipScore = true;
+                }
+
+                if (scoreTimeline.isFinish)
+                {
+                    sceneLoader.Load("Title");
+                }
+
                 break;
         }
+    }
+
+    private void ScoreSave()
+    {
+        scoreUI.flyingDistanceText.text = scoreManager.FlyingDistance().ToString();
+        scoreUI.sizeText.text = scoreManager.SizePercent().ToString();
+        if (scoreManager.isGameClear)
+        {
+            scoreUI.clearBonusText.text = "×" + scoreManager.clearBonusMultiple.ToString();
+        }
+        else
+        {
+            scoreUI.clearBonusText.text = "";
+        }
+        scoreUI.totalScoreText.text = scoreManager.TotalScore().ToString();
     }
 }

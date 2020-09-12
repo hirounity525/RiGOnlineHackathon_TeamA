@@ -43,4 +43,9 @@ public class InputProvider : MonoBehaviour
             }
         }
     }
+
+    public bool GetSkipButtonDown()
+    {
+        return Input.GetButtonDown("LeftMouseClick");
+    }
 }

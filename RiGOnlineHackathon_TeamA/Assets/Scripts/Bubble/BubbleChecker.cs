@@ -25,6 +25,11 @@ public class BubbleChecker : MonoBehaviour
                 sePlayer.PlaySE("Break");
                 bubbleCore.isHit = true;
             }
+
+            if(collision.gameObject.tag == "Goal")
+            {
+                bubbleCore.isGoal = true;
+            }
         }
     }
 }

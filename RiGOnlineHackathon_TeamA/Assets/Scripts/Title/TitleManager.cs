@@ -16,6 +16,12 @@ public class TitleManager : MonoBehaviour
         sceneLoader = GetComponent<SceneLoader>();
     }
 
+    private void Start()
+    {
+        fadeImage.color = new Color(0, 0, 0, 0.99f);
+        fadeImage.DOFade(0.0f, startDuration).SetEase(Ease.OutCubic);
+    }
+
     private void Update()
     {
         if(fadeImage.color.a >= 1.0f)

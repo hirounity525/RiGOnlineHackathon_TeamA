@@ -5,4 +5,5 @@ using UnityEngine;
 public class BubbleCore : MonoBehaviour
 {
     public bool isHit;
+    public bool isGoal;
 }
